@@ -26,4 +26,4 @@ cfg.category1.cat2.dir1 = params.file('dir');
 cfg.someHiddenConfig = hidden_config;
 cfg.someHiddenConfig.metaHidden = true;
 
-cfg = configparam(cfg,'myconfig');
+cfg = uiconfig(cfg,'myconfig');

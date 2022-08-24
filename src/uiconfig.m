@@ -1,4 +1,4 @@
-classdef configparam < dynamicprops
+classdef uiconfig < dynamicprops
     
     properties
         meta
@@ -9,13 +9,13 @@ classdef configparam < dynamicprops
     end
     
     properties(Hidden)
-        metaName = 'config'
+        metaName = 'uiconfig'
         metaHidden = false
     end
 
     methods
-        function obj = configparam(meta,name,hiddenFlag)
-            if isa(meta,'configparam')
+        function obj = uiconfig(meta,name,hiddenFlag)
+            if isa(meta,'uiconfig')
                 obj = meta;
                 return
             end
@@ -35,8 +35,8 @@ classdef configparam < dynamicprops
                     prop.SetObservable = true;
                     prop.GetObservable = true;
                     obj.(pname) = p.default;
-                elseif isstruct(p) || isa(p,'configparam')
-                    obj.(pname) = configparam(p,pname);
+                elseif isstruct(p) || isa(p,'uiconfig')
+                    obj.(pname) = uiconfig(p,pname);
                 else
                     error('illegal class (%s) for %s',class(p),pname);
                 end
@@ -154,7 +154,7 @@ function RecursiveAddNode(parent,o,P)
     fn = fieldnames(o);
     for i=1:numel(fn)
         f = o.(fn{i});
-        if isa(f,'configparam') && (~f.metaHidden || P.UserData.ShowHidden)
+        if isa(f,'uiconfig') && (~f.metaHidden || P.UserData.ShowHidden)
             N = uitreenode(parent,'Text',fn{i},'NodeData',f);
             RecursiveAddNode(N,f,P);
         end
