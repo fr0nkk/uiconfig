@@ -27,7 +27,7 @@ classdef matrixeditor < handle
     methods
         function obj = matrixeditor(M)
 
-            if nargin < 1, M = zeros(3,3); end
+            if nargin < 1, M = eye(3,3); end
             
             obj.parent = uifigure('Name','Matrix Editor');
             
@@ -90,14 +90,14 @@ classdef matrixeditor < handle
             obj.dimShow = cell(1,nd-2);
             obj.dimSizes = cell(1,nd);
             for i=1:nd
-                obj.dimSizes{i} = uisetlayout(uispinner(g,'Value',sz(i),'Limits',[1 inf],'ValueChangedFcn',@obj.ChangeSize),1,i+1);
+                obj.dimSizes{i} = uisetlayout(uispinner(g,'Value',sz(i),'Limits',[1 inf],'ValueChangedFcn',@obj.ChangeSize,'RoundFractionalValues','on'),1,i+1);
                 if i <= 2
                     
                     a = {'Rows(:)', 'Columns(:)'};
                     uisetlayout(uilabel(g,'Text',a{i},'VerticalAlignment','Center','HorizontalAlignment','Center','FontName','Courier New'),2,i+1);
 
                 else
-                    s = uisetlayout(uispinner(g,'Value',pg(i),'ValueChangedFcn',@obj.UpdateTextArea,'Limits',[1 sz(i)]),2,i+1);
+                    s = uisetlayout(uispinner(g,'Value',pg(i),'ValueChangedFcn',@obj.UpdateTextArea,'Limits',[1 sz(i)],'RoundFractionalValues','on'),2,i+1);
                     obj.dimShow{i-2} = s;
                     obj.dimSizes{i}.Limits = [2 inf];
                 end
@@ -190,9 +190,12 @@ classdef matrixeditor < handle
         end
 
         function ChangeSize(obj,~,~)
-            sz = size(obj.M);
+            
             newSz = cellfun(@(c) c.Value,obj.dimSizes);
+%             sz = size(obj.M,1:numel(newSz));
+            sz = size(obj.M);
             newM = zeros(newSz,'like',obj.M);
+
             pg = arrayfun(@(a) 1:a,min(sz,newSz),'uni',0);
             newM(pg{:}) = obj.M(pg{:});
             obj.M = newM;

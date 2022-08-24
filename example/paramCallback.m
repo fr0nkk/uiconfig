@@ -1,6 +1,6 @@
 function paramCallback(src,evt)
 
-fprintf('Value changed for %s :\n',evt.param);
+fprintf('%s: Value changed for %s :\n',src.metaName,evt.param);
 disp(evt.value);
 
 end
