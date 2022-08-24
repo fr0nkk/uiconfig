@@ -6,4 +6,4 @@ cfg.bool = params.bool(true);
 cfg.fcn = params.fcn(@disp);
 cfg.select = params.selection({'option 1','option 2','option 3'},'option 2');
 
-cfg = configparam(cfg,'myconfig2');
+cfg = uiconfig(cfg,'myconfig2');

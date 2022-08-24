@@ -1,4 +1,4 @@
-function cfg = myconfig
+function cfg = hidden_config
 
 cfg.num_value = params.scalar;
 cfg.mat_value = params.matrix;
@@ -23,4 +23,4 @@ cfg.some_vector = params.vector;
 cfg.category1.file1 = params.file;
 cfg.category1.cat2.dir1 = params.file('dir');
 
-cfg = configparam(cfg,'myconfig');
+cfg = uiconfig(cfg,'myconfig');
