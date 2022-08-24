@@ -43,7 +43,7 @@ classdef uiconfig < dynamicprops
             end
         end
 
-        function Reset(obj)
+        function cfgReset(obj)
             fn = fieldnames(obj.meta);
             for i=1:numel(fn)
                 f = fn{i};
@@ -51,13 +51,18 @@ classdef uiconfig < dynamicprops
                 if isa(p,'params.abstract')
                     obj.(f) = obj.meta.(f).default;
                 else
-                    obj.(f).Reset;
+                    obj.(f).cfgReset;
                 end
             end
         end
 
-        function fromStruct(obj,s)
-            obj.Reset;
+        function c = cfgCopy(obj)
+            c = uiconfig(obj.meta);
+            c.cfgFromStruct(obj.cfgToStruct);
+        end
+
+        function cfgFromStruct(obj,s)
+            obj.cfgReset;
             fn = fieldnames(s);
             for i=1:numel(fn)
                 f = fn{i};
@@ -65,12 +70,12 @@ classdef uiconfig < dynamicprops
                 if isa(p,'params.abstract')
                     obj.(f) = s.(f);
                 else
-                    obj.(f).fromStruct(s.(f));
+                    obj.(f).cfgFromStruct(s.(f));
                 end
             end
         end
 
-        function s = toStruct(obj)
+        function s = cfgToStruct(obj)
             s = struct;
             fn = fieldnames(obj.meta);
             for i=1:numel(fn)
@@ -79,13 +84,13 @@ classdef uiconfig < dynamicprops
                 if isa(p,'params.abstract')
                     v = obj.(f);
                 else
-                    v = obj.(f).toStruct;
+                    v = obj.(f).cfgToStruct;
                 end
                 s.(f) = v;
             end
         end
 
-        function ui(obj,showHiddenFlag)
+        function f = ui(obj,showHiddenFlag)
             if nargin < 2, showHiddenFlag = false; end
 
             f = uifigure;
@@ -101,6 +106,8 @@ classdef uiconfig < dynamicprops
             N.expand;
             T.SelectedNodes = N;
             NodeSelect(T,P);
+%             f.UserData.cfg = obj;
+            f.UserData.Refresh = @() NodeSelect(T,P);
         end
     end
 end
