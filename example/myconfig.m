@@ -1,6 +1,7 @@
 function cfg = myconfig
 
 cfg.num_value = params.scalar;
+cfg.sep = params.label;
 cfg.mat_value = params.matrix;
 
 cfg.const_value = params.scalar(10);
@@ -24,6 +25,6 @@ cfg.category1.file1 = params.file;
 cfg.category1.cat2.dir1 = params.file('dir');
 
 cfg.someHiddenConfig = hidden_config;
-cfg.someHiddenConfig.metaHidden = true;
+cfg.someHiddenConfig.zprop_hidden = true;
 
 cfg = uiconfig(cfg,'myconfig');

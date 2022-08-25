@@ -12,9 +12,9 @@ classdef file < handle
         function obj = file(cparam,val,parent,cfgset)
             obj.g = uigridlayout(parent,[1 2],'ColumnWidth',{'1x',50},'Padding',0,'ColumnSpacing',5);
 
-            obj.textField = uisetlayout(uieditfield(obj.g,'text','Value',cparam.toString(val),'Editable',~cparam.constant,'ValueChangedFcn',@obj.SetFromText),1,1);
+            obj.textField = uisetlayout(uieditfield(obj.g,'text','Value',cparam.toString(val),'Editable',cparam.editable,'ValueChangedFcn',@obj.SetFromText),1,1);
 
-            obj.editButton = uisetlayout(uibutton(obj.g,'Text','Select','ButtonPushedFcn',@obj.SetFromButton),1,2);
+            obj.editButton = uisetlayout(uibutton(obj.g,'Text','Select','ButtonPushedFcn',@obj.SetFromButton,'Enable',cparam.editable),1,2);
 
             obj.cfgset = cfgset;
             obj.cparam = cparam;

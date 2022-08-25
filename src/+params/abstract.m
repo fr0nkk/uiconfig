@@ -6,9 +6,15 @@ classdef abstract
     properties
         name = ''
         description = ''
-        hidden = false
-        constant = false
+        hidden logical = false
+        enabled logical = true
+        constant logical = false
         validFcn = @(val) val
+        UserData
+    end
+
+    properties(Dependent)
+        editable
     end
 
     methods
@@ -22,33 +28,42 @@ classdef abstract
             if obj.constant && ~strcmp(obj.toString(val),obj.toString(obj.default))
                 error('Param is constant')
             end
+            if ~obj.enabled
+                error('Param is not enabled');
+            end
             val = obj.validFcn(val);
         end
 
-        function c = ui(obj,val,parent,cfgset,varargin)
-            c = uieditfield(parent,'text', ...
-                'Value',obj.toString(val), ...
-                'ValueChangedFcn',@(src,evt) obj.uisetprop(src,cfgset,varargin{:}), ...
-                'Editable',~obj.constant);
+        function ui_base(obj,g,i,name,val,cfgset)
+            uisetlayout(uilabel(g,'Text',name,'Tooltip',obj.description),i,1);
+            uisetlayout(obj.ui(val,g,cfgset),i,2);
         end
 
-        function success = uisetprop(obj,comp,cfgset,varargin)
+        function c = ui(obj,val,parent,cfgset)
+            c = uieditfield(parent,'text', ...
+                'Value',obj.toString(val), ...
+                'ValueChangedFcn',@(src,evt) obj.uisetprop(src,cfgset), ...
+                'Editable',obj.editable);
+        end
+
+        function success = uisetprop(obj,comp,cfgset)
             success = true;
+            comp.BackgroundColor = [1 1 1];
+            comp.Tooltip = '';
             try
                 v = obj.fromString(comp.Value);
                 v = obj.validate(v);
-                cfgset(v);
-                comp.Value = obj.toString(v);
-                for i=1:numel(varargin)
-                    varargin{i}(v);
-                end
-                comp.BackgroundColor = [1 1 1];
-                comp.Tooltip = '';
             catch ME
                 comp.Tooltip = ME.message;
                 comp.BackgroundColor = [1 0.8 0.8];
                 success = false;
+                return
             end
+            cfgset(v);
+        end
+
+        function tf = get.editable(obj)
+            tf = ~obj.constant && obj.enabled;
         end
     end
     

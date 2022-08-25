@@ -12,7 +12,7 @@ classdef bool < params.scalar
         end
 
         function c = ui(obj,val,parent,cfgset,varargin)
-            c = uicheckbox(parent,'Value',val,'Enable',~obj.constant,'ValueChangedFcn',@(src,evt) cfgset(src.Value),'Text','');
+            c = uicheckbox(parent,'Value',val,'Enable',obj.editable,'ValueChangedFcn',@(src,evt) cfgset(src.Value),'Text','');
         end
 
     end

@@ -25,7 +25,7 @@ classdef selection < params.char
         end
 
         function c = ui(obj,val,parent,cfgset,varargin)
-            c = uidropdown(parent,'Value',val,'Enable',~obj.constant,'ValueChangedFcn',@(src,evt) cfgset(src.Value),'Items',obj.options);
+            c = uidropdown(parent,'Value',val,'Enable',obj.editable,'ValueChangedFcn',@(src,evt) cfgset(src.Value),'Items',obj.options);
         end
     end
 end

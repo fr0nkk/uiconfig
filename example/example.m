@@ -11,7 +11,7 @@ c.mat_value = rand(2,2);
 %% show ui
 f = c.ui;
 
-addlistener(c.other_cfg,'select','PostSet',@(src,evt,fig) myListener(src,evt,f))
+addlistener(c.other_cfg,'select','PostSet',@(src,evt) myListener(src,evt,f))
 
 %% show ui with hidden values
 % c.ui(true)
