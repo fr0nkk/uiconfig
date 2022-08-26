@@ -10,41 +10,39 @@ classdef uiconfig < dynamicprops
     
     properties
         % meta data of the config, constraints etc
-        zprop_meta
+        meta
         
         % ui display name of this config
-        zprop_name = 'uiconfig'
+        name = 'uiconfig'
 
         % should be hidden when it is part of some other config
-        zprop_hidden = false
+        hidden = false
 
         % use switch pname to modify other parameters that depends on pname
-        zprop_postset = @(cfg,pname) false; % should return updateNodesFlag
-
-        zprop_autoUpdateUi = true
+        postsetFcn = @(cfg,pname) false; % should return updateNodesFlag
     end
 
     properties%(Access=private)
-        zprop_currentui = {}
+        currentui = {}
     end
 
     methods
-        function obj = uiconfig(cfgmeta,name,hiddenFlag,postSetFcn)
-            if isa(cfgmeta,'uiconfig')
-                obj = cfgmeta;
+        function obj = uiconfig(meta,name,hidden,postsetFcn)
+            if isa(meta,'uiconfig')
+                obj = meta;
                 return
             end
-            obj.zprop_meta = cfgmeta;
+            obj.meta = meta;
 
-            if nargin >= 2, obj.zprop_name = name; end
-            if nargin >= 3, obj.zprop_hidden = hiddenFlag; end
-            if nargin >= 4, obj.zprop_postset = postSetFcn; end
+            if nargin >= 2, obj.name = name; end
+            if nargin >= 3, obj.hidden = hidden; end
+            if nargin >= 4, obj.postsetFcn = postsetFcn; end
 
-            fldnm = fieldnames(obj.zprop_meta);
+            fldnm = fieldnames(obj.meta);
             for i=1:numel(fldnm)
                 pname = fldnm{i};
                 prop = obj.addprop(pname);
-                p = obj.zprop_meta.(pname);
+                p = obj.meta.(pname);
                 if isa(p,'params.abstract')
                     obj.(pname) = p.default;
                     prop.SetMethod = SetProp(obj,pname);
@@ -64,12 +62,12 @@ classdef uiconfig < dynamicprops
                 temp = onCleanup(@() obj.zfcn_enableuis(true));
             end
 
-            fn = fieldnames(obj.zprop_meta);
+            fn = fieldnames(obj.meta);
             for i=1:numel(fn)
                 f = fn{i};
-                p = obj.zprop_meta.(f);
+                p = obj.meta.(f);
                 if isa(p,'params.abstract')
-                    obj.(f) = obj.zprop_meta.(f).default;
+                    obj.(f) = obj.meta.(f).default;
                 else
                     obj.(f).zfcn_reset(true);
                 end
@@ -82,7 +80,7 @@ classdef uiconfig < dynamicprops
         end
 
         function c = zfcn_copy(obj)
-            c = uiconfig(obj.zprop_meta,obj.zprop_name,obj.zprop_hidden,obj.zprop_postset);
+            c = uiconfig(obj.meta,obj.name,obj.hidden,obj.postsetFcn);
             c.zfcn_fromStruct(obj.zfcn_toStruct);
         end
 
@@ -98,7 +96,7 @@ classdef uiconfig < dynamicprops
             fn = fieldnames(s);
             for i=1:numel(fn)
                 f = fn{i};
-                p = obj.zprop_meta.(f);
+                p = obj.meta.(f);
                 if isa(p,'params.abstract')
                     obj.(f) = s.(f);
                 else
@@ -114,10 +112,10 @@ classdef uiconfig < dynamicprops
 
         function s = zfcn_toStruct(obj)
             s = struct;
-            fn = fieldnames(obj.zprop_meta);
+            fn = fieldnames(obj.meta);
             for i=1:numel(fn)
                 f = fn{i};
-                p = obj.zprop_meta.(f);
+                p = obj.meta.(f);
                 if isa(p,'params.abstract')
                     v = obj.(f);
                 else
@@ -130,7 +128,7 @@ classdef uiconfig < dynamicprops
         function fig = ui(obj,showHidden)
             if nargin < 2, showHidden = false; end
 
-            fig = uifigure('Name',obj.zprop_name);
+            fig = uifigure('Name',obj.name);
             fig.UserData.NoRefresh = false;
 
             g = uigridlayout(fig,[1 2],'ColumnWidth',{'1x' '3x'});
@@ -147,31 +145,31 @@ classdef uiconfig < dynamicprops
         end
 
         function zfcn_updateuis(obj,name,updateNodes)
-            obj.zprop_currentui = obj.zprop_currentui(cellfun(@isvalid,obj.zprop_currentui));
-            for i=1:numel(obj.zprop_currentui)
+            obj.currentui = obj.currentui(cellfun(@isvalid,obj.currentui));
+            for i=1:numel(obj.currentui)
                 if updateNodes
                     disp('ref')
-                    obj.zprop_currentui{i}.UserData.RefreshTree();
+                    obj.currentui{i}.UserData.RefreshTree();
                 end
-%                 if strcmp(obj.zprop_currentui{i}.Children.Children(2).SelectedNodes.NodeData.zprop_name,name)
-                obj.zprop_currentui{i}.UserData.Refresh();
+%                 if strcmp(obj.currentui{i}.Children.Children(2).SelectedNodes.NodeData.name,name)
+                obj.currentui{i}.UserData.Refresh();
 %                     disp('refresh');
 %                 end
             end
         end
 
         function zfcn_enableuis(obj,tf)
-            obj.zprop_currentui = obj.zprop_currentui(cellfun(@isvalid,obj.zprop_currentui));
-            for i=1:numel(obj.zprop_currentui)
-                obj.zprop_currentui{i}.UserData.NoRefresh = ~tf;
+            obj.currentui = obj.currentui(cellfun(@isvalid,obj.currentui));
+            for i=1:numel(obj.currentui)
+                obj.currentui{i}.UserData.NoRefresh = ~tf;
             end
         end
     end
 end
 
 function ResursiveAddUI(o,fig)
-    o.zprop_currentui{end+1} = fig;
-    fn = fieldnames(o.zprop_meta);
+    o.currentui{end+1} = fig;
+    fn = fieldnames(o.meta);
     for i=1:numel(fn)
         f = o.(fn{i});
         if isa(f,'uiconfig')
@@ -187,30 +185,27 @@ function MakeNodes(obj,T,P)
 %         curNode = [];
 %     end
     delete(T.Children);
-    a = structfun(@(s) isa(s,'params.abstract'),obj.zprop_meta);
+    a = structfun(@(s) isa(s,'params.abstract'),obj.meta);
     if all(a)
         % only params
         T.Visible = 0;
         P.Layout.Column = [1 2];
-        N = uitreenode(T,'Text',obj.zprop_name,'NodeData',obj);
-%         T.SelectedNodes = N;
+        N = uitreenode(T,'Text',obj.name,'NodeData',obj);
     else
         T.Visible = 1;
         P.Layout.Column = 2;
         if ~any(a)
             % only categories
-            fn = fieldnames(obj.zprop_meta);
+            fn = fieldnames(obj.meta);
             for i=1:numel(fn)
                 RecursiveAddNode(obj.(fn{i}),T,P);
             end
+            N = T.Children(1);
         else
             % mixed
-%             N = uitreenode(T,'Text',obj.zprop_name,'NodeData',obj);
-            RecursiveAddNode(obj,T,P);
-            
+            N = RecursiveAddNode(obj,T,P);
+            N.expand;
         end
-        N = T.Children(1);
-        N.expand;
         
     end
     T.SelectedNodes = N;
@@ -219,9 +214,9 @@ end
 
 function f = SetProp(obj, pname) %#ok<INUSL> 
     function setProp(obj, val)
-        obj.(pname) = obj.zprop_meta.(pname).validate(val);
-        tf = obj.zprop_postset(obj,pname);
-        obj.zfcn_updateuis(obj.zprop_name,tf);
+        obj.(pname) = obj.meta.(pname).validate(val);
+        tf = obj.postsetFcn(obj,pname);
+        obj.zfcn_updateuis(obj.name,tf);
         ev = ParamChangedEvent(pname,val);
         notify(obj,'ParamChanged',ev);
     end
@@ -234,12 +229,12 @@ function NodeSelect(T,P)
     delete(P.Children);
 
     o = T.SelectedNodes.NodeData;
-    fn = fieldnames(o.zprop_meta);
-    tf = cellfun(@(c) isa(o.zprop_meta.(c),'params.abstract'),fn);
+    fn = fieldnames(o.meta);
+    tf = cellfun(@(c) isa(o.meta.(c),'params.abstract'),fn);
     
     fni = fn(tf);
     if ~P.UserData.ShowHidden
-        tf = ~cellfun(@(c) o.zprop_meta.(c).hidden,fni);
+        tf = ~cellfun(@(c) o.meta.(c).hidden,fni);
         fni = fni(tf);
     end
     n = numel(fni);
@@ -249,15 +244,13 @@ function NodeSelect(T,P)
 
     for i=1:numel(fni)
         f = fni{i};
-        m = o.zprop_meta.(f);
+        m = o.meta.(f);
         if isempty(m.name)
             name = f;
         else
             name = m.name;
         end
         m.ui_base(g,i,name,o.(f),@(v) uisetprop(o,f,v));
-%         uisetlayout(uilabel(g,'Text',name,'Tooltip',m.description),i,1);
-%         uisetlayout(m.ui(o.(f),g,@(v) uisetprop(o,f,v)),i,2);
     end
 end
 
@@ -266,12 +259,11 @@ function uisetprop(o,f,v)
 end
 
 function N = RecursiveAddNode(o,parent,P)
-N = uitreenode(parent,'Text',o.zprop_name,'NodeData',o);
-    fn = fieldnames(o.zprop_meta);
+    N = uitreenode(parent,'Text',o.name,'NodeData',o);
+    fn = fieldnames(o.meta);
     for i=1:numel(fn)
         f = o.(fn{i});
-        if isa(f,'uiconfig') && (~f.zprop_hidden || P.UserData.ShowHidden)
-%             N = uitreenode(parent,'Text',f.zprop_name,'NodeData',f);
+        if isa(f,'uiconfig') && (~f.hidden || P.UserData.ShowHidden)
             RecursiveAddNode(f,N,P);
         end
     end

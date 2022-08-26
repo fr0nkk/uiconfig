@@ -25,6 +25,6 @@ cfg.category1.file1 = params.file;
 cfg.category1.cat2.dir1 = params.file('dir');
 
 cfg.someHiddenConfig = hidden_config;
-cfg.someHiddenConfig.zprop_hidden = true;
+cfg.someHiddenConfig.hidden = true;
 
 cfg = uiconfig(cfg,'myconfig');

@@ -16,12 +16,13 @@ function varargout = dynamic_param_example()
     cfgmeta.node.param = params.scalar(1);
     
     c = uiconfig(cfgmeta,'dynamic_example',0,@postset);
-    c.dependent_param.zprop_postset = @postset;
-    c.hide_unhide.zprop_postset = @postset;
-    c.node.zprop_hidden = true;
+    c.dependent_param.postsetFcn = @postset;
+    c.hide_unhide.postsetFcn = @postset;
+    c.node.hidden = true;
     
 
     postset(c.hide_unhide,'selection');
+    postset(c.dependent_param,'numbers');
 
     if nargout == 0
         c.ui;
@@ -35,16 +36,16 @@ function tf = postset(cfg,pname)
     tf = false;
     switch pname
         case 'numbers'
-            cfg.zprop_meta.sum.enabled = true;
+            cfg.meta.sum.enabled = true;
             cfg.sum = sum(cfg.numbers);
-            cfg.zprop_meta.sum.enabled = false;
+            cfg.meta.sum.enabled = false;
         case 'selection'
-            cfg.zprop_meta.scalar.hidden = 1;
-            cfg.zprop_meta.vector.hidden = 1;
-            cfg.zprop_meta.matrix.hidden = 1;
-            cfg.zprop_meta.(cfg.selection).hidden = 0;
+            cfg.meta.scalar.hidden = 1;
+            cfg.meta.vector.hidden = 1;
+            cfg.meta.matrix.hidden = 1;
+            cfg.meta.(cfg.selection).hidden = 0;
         case 'hidden_node'
-            cfg.node.zprop_hidden = cfg.hidden_node;
+            cfg.node.hidden = cfg.hidden_node;
             tf = true;
     end
 end
