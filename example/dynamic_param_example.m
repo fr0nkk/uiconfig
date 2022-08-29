@@ -11,7 +11,6 @@ function varargout = dynamic_param_example()
     
     cfgmeta.dependent_param.numbers = uic.vector(1:3);
     cfgmeta.dependent_param.sum = uic.scalar();
-%     cfgmeta.dependent_param.sum.enabled = false;
 
     cfgmeta.node.param = uic.scalar(1);
     
@@ -24,15 +23,7 @@ function varargout = dynamic_param_example()
     postset_num(c.dependent_param);
 
     c.meta.hidden_node.postsetFcn = @() postset_hid(c);
-    postset_hid(c)
-
-%     c.dependent_param.postsetFcn = @postset;
-%     c.hide_unhide.postsetFcn = @postset;
-%     c.node.hidden = true;
-    
-
-    
-%     postset(c.dependent_param,'numbers');
+    postset_hid(c);
 
     if nargout == 0
         c.ui;

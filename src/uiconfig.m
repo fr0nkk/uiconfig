@@ -61,7 +61,7 @@ classdef uiconfig < dynamicprops
 
             fig = uifigure('Name',obj.name);
 
-            g = uigridlayout(fig,[1 2],'ColumnWidth',{'1x' '3x'});
+            g = uigridlayout(fig,[1 2],'ColumnWidth',{'1x' '2x'});
 
             P = uisetlayout(uipanel(g),1,2);
             P.UserData.ShowHidden = showHidden;
