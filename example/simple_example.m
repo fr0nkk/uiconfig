@@ -12,6 +12,7 @@ meta.some_color = uic.color(uint8([0 255 0]));
 meta.some_file = uic.file();
 meta.some_dir = uic.file([],'dir');
 meta.some_fcn = uic.fcn(@disp);
+meta.some_struct = uic.structure(struct('abc','def'));
 
 cfg = uiconfig(meta,'simple example');
 
