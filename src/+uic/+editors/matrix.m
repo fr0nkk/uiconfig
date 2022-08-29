@@ -26,7 +26,7 @@ classdef matrix < handle
             u = matrixeditor(obj.cparam.fromString(obj.textField.Value));
             u.fcnOK = @(M) obj.FinishEdit(M,u);
             u.castDropdown.Enable = false;
-            u.parent.WindowStyle = 'modal';
+%             u.parent.WindowStyle = 'modal';
         end
 
         function FinishEdit(obj,M,u)

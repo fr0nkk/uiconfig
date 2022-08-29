@@ -36,7 +36,7 @@ classdef matrixeditor < handle
             % options
             obj.optGrid = uisetlayout(uigridlayout(obj.mainGrid,[1 5],'Padding',0,'ColumnWidth',{80 60 60 70 60 '1x'},'ColumnSpacing',5),1,1);
             obj.castDropdown = uisetlayout(uidropdown(obj.optGrid,'Items',obj.castOptions,'ValueChangedFcn',@obj.CastDropdownFcn),1,1);
-            obj.flipDropdown = uisetlayout(uidropdown(obj.optGrid,'ValueChangedFcn',@obj.FlipDropdownFcn,'Items',{''},'Placeholder','flip','Value',''),1,2);
+            obj.flipDropdown = uisetlayout(uidropdown(obj.optGrid,'ValueChangedFcn',@obj.FlipDropdownFcn,'Items',{'flip'}),1,2);
             obj.rotButton = uisetlayout(uibutton(obj.optGrid,'Text','rot90','ButtonPushedFcn',@obj.rot90Button),1,3);
             obj.permuteButton = uisetlayout(uibutton(obj.optGrid,'Text','permute','ButtonPushedFcn',@obj.permuteButtonFcn),1,4);
             obj.inverseButton = uisetlayout(uibutton(obj.optGrid,'Text','inverse','ButtonPushedFcn',@obj.inverseButtonFcn,'Enable','off'),1,5);
@@ -212,7 +212,7 @@ classdef matrixeditor < handle
 
         function FlipDropdownFcn(obj,src,evt)
             dim = sscanf(extractAfter(obj.flipDropdown.Value,' '),'%i');
-            obj.flipDropdown.Value = '';
+            obj.flipDropdown.Value = 'flip';
             obj.UpdateMatrix(flip(obj.M,dim));
         end
 
@@ -231,7 +231,7 @@ classdef matrixeditor < handle
         function UpdateMatrix(obj,M)
             obj.M = M;
             obj.castDropdown.Value = class(M);
-            obj.flipDropdown.Items = [{''} compose('dim %i',1:ndims(M))];
+            obj.flipDropdown.Items = [{'flip'} compose('dim %i',1:ndims(M))];
             obj.MakeDims;
             obj.UpdateTextArea;
         end
