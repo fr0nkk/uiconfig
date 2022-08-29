@@ -93,7 +93,7 @@ end
 function f = SetProp(obj, pname) %#ok<INUSL> 
     function setProp(obj, val)
         obj.meta.(pname).value = val;
-%         obj.(pname) = obj.meta.(pname).value;
+        obj.(pname) = obj.meta.(pname).value;
         ev = ParamChangedEvent(pname,val);
         notify(obj,'ParamChanged',ev);
     end
