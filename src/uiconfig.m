@@ -102,8 +102,8 @@ classdef uiconfig < dynamicprops
             fn = fieldnames(obj.meta);
             for i=1:numel(fn)
                 f = fn{i};
-                if isa(obj.meta.(f),'uiconfig')
-                    obj.meta.(f).reset;
+                if isa(obj.(f),'uiconfig')
+                    obj.(f).reset;
                 else
                     obj.(f) = obj.meta.(f).default;
                 end
@@ -115,8 +115,8 @@ classdef uiconfig < dynamicprops
             fn = fieldnames(s);
             for i=1:numel(fn)
                 f = fn{i};
-                if isa(obj.meta.(f),'uiconfig')
-                    obj.meta.(f).fromStruct(s.(f),strFlag);
+                if isa(obj.(f),'uiconfig')
+                    obj.(f).fromStruct(s.(f),strFlag);
                 else
                     v = s.(f);
                     if strFlag
