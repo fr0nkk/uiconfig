@@ -141,18 +141,19 @@ classdef uiconfig < dynamicprops
 
             fig.UserData.Refresh = @() NodeSelect(T,P);
             fig.UserData.RefreshTree = @() MakeNodes(obj,T,P);
+            fig.UserData.ID = char(matlab.lang.internal.uuid);
             ResursiveAddUI(obj,fig)
         end
 
-        function zfcn_updateuis(obj,name,updateNodes)
+        function zfcn_updateuis(obj,updateNodes)
             obj.currentui = obj.currentui(cellfun(@isvalid,obj.currentui));
             for i=1:numel(obj.currentui)
                 if updateNodes
                     disp('ref')
                     obj.currentui{i}.UserData.RefreshTree();
                 end
-%                 if strcmp(obj.currentui{i}.Children.Children(2).SelectedNodes.NodeData.name,name)
-                obj.currentui{i}.UserData.Refresh();
+%                 if ~strcmp(obj.currentui{i}.UserData.ID,id)
+                    obj.currentui{i}.UserData.Refresh();
 %                     disp('refresh');
 %                 end
             end
@@ -216,7 +217,7 @@ function f = SetProp(obj, pname) %#ok<INUSL>
     function setProp(obj, val)
         obj.(pname) = obj.meta.(pname).validate(val);
         tf = obj.postsetFcn(obj,pname);
-        obj.zfcn_updateuis(obj.name,tf);
+        obj.zfcn_updateuis(tf);
         ev = ParamChangedEvent(pname,val);
         notify(obj,'ParamChanged',ev);
     end
@@ -250,12 +251,14 @@ function NodeSelect(T,P)
         else
             name = m.name;
         end
-        m.ui_base(g,i,name,o.(f),@(v) uisetprop(o,f,v));
+        m.ui_base(g,i,name,o.(f),@(v) uisetprop(o,f,v,P));
     end
 end
 
-function uisetprop(o,f,v)
+function uisetprop(o,f,v,P)
     o.(f) = v;
+%     id = P.Parent.Parent.UserData.ID;
+%     obj.zfcn_updateuis(id,tf);
 end
 
 function N = RecursiveAddNode(o,parent,P)

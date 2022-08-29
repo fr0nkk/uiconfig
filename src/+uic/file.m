@@ -1,4 +1,4 @@
-classdef file < params.char
+classdef file < uic.char
     
     properties
         type = 'get' % get, put, dir
@@ -7,16 +7,20 @@ classdef file < params.char
     methods
         function obj = file(default,type)
             if nargin < 1 || isempty(default), default = getenv('USERPROFILE'); end
-            obj@params.char(default,false);
+            obj@uic.char(default,false);
             if nargin >= 2, obj.type = type; end
         end
 
         function val = validate(obj,val)
-            val = obj.validate@params.char(val);
+            val = obj.validate@uic.char(val);
         end
 
-        function c = ui(obj,val,parent,cfgset)
-            c = params.editors.file(obj,val,parent,cfgset).g;
+        function c = uiTextField(obj,parent)
+            c = uic.editors.file(obj,parent).g;
+        end
+
+        function updateuiFcn(obj,comp)
+            comp.Children(1).Value = obj.toString(obj.value);
         end
     end
 end

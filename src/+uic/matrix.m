@@ -1,4 +1,4 @@
-classdef matrix < params.abstract
+classdef matrix < uic.abstract
     %MATRIX Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -43,7 +43,7 @@ classdef matrix < params.abstract
 
             val = cast(val,class(obj.default));
 
-            val = obj.validate@params.abstract(val);
+            val = obj.validate@uic.abstract(val);
         end
 
         function str = toString(obj,val)
@@ -68,8 +68,8 @@ classdef matrix < params.abstract
             val = reshape(cast(sscanf(valStr,fmt),class(obj.default)),msz{:});
         end
 
-        function c = ui(obj,val,parent,cfgset)
-            c = params.editors.matrix(obj,val,parent,cfgset).g;
+        function c = uiTextField(obj,parent)
+            c = uic.editors.matrix(obj,parent).g;
         end
 
         function fmt = getFmt(obj,d)
@@ -94,6 +94,10 @@ classdef matrix < params.abstract
                 otherwise
                     error('Invalid class: %s',c);
             end
+        end
+
+        function updateuiFcn(obj,comp)
+            comp.Children(1).Value = obj.toString(obj.value);
         end
     end
 

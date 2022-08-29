@@ -1,4 +1,4 @@
-classdef char < params.abstract
+classdef char < uic.abstract
     
     properties
         default = ''
@@ -18,7 +18,7 @@ classdef char < params.abstract
             if ~obj.emptyAllowed && isempty(val)
                 error('Empty value not allowed');
             end
-            val = obj.validate@params.abstract(val);
+            val = obj.validate@uic.abstract(val);
         end
 
         function str = toString(obj,val)

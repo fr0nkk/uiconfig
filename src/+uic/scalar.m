@@ -1,4 +1,4 @@
-classdef scalar < params.matrix
+classdef scalar < uic.matrix
     
     properties
         
@@ -7,7 +7,7 @@ classdef scalar < params.matrix
     methods
         function obj = scalar(default)
             if nargin < 1, default = nan; end
-            obj@params.matrix(default,1);
+            obj@uic.matrix(default,1);
         end
 
         function str = toString(obj,val)
@@ -20,8 +20,8 @@ classdef scalar < params.matrix
             val = sscanf(str,fmt);
         end
 
-        function c = ui(varargin)
-            c = ui@params.abstract(varargin{:});
+        function c = uiTextField(varargin)
+            c = uiTextField@uic.abstract(varargin{:});
         end
 
         
