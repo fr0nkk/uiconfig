@@ -11,6 +11,7 @@ classdef abstract < handle
         enabled logical = true
         constant logical = false
         validFcn = @(val) val
+        postsetFcn;
 
         uicomp = {}
         uipos = [];
@@ -30,11 +31,18 @@ classdef abstract < handle
         function set.value(obj,v)
             obj.value = obj.validate(v);
             obj.updateui;
+            obj.postset;
         end
 
         function set.hidden(obj,h)
             obj.hidden = h;
             obj.updateuih;
+        end
+
+        function postset(obj)
+            if ~isempty(obj.postsetFcn)
+                obj.postsetFcn();
+            end
         end
 
         function val = validate(obj,val)

@@ -1,4 +1,4 @@
-classdef uiconfig2 < dynamicprops
+classdef uiconfig < dynamicprops
     
     events
         % use addlistener on this event to catch when any parameter changes
@@ -14,7 +14,7 @@ classdef uiconfig2 < dynamicprops
         meta
         
         % ui display name of this config
-        name = 'uiconfig2'
+        name = 'uiconfig'
 
         % should be hidden when it is part of some other config
         hidden = false
@@ -26,8 +26,8 @@ classdef uiconfig2 < dynamicprops
     end
     
     methods
-        function obj = uiconfig2(meta,name,hidden)
-            if isa(meta,'uiconfig2')
+        function obj = uiconfig(meta,name,hidden)
+            if isa(meta,'uiconfig')
                 obj = meta;
                 return
             end
@@ -48,8 +48,8 @@ classdef uiconfig2 < dynamicprops
                     prop.SetMethod = SetProp(obj,pname);
                     prop.GetMethod = GetProp(obj,pname);
                     prop.SetObservable = true;
-                elseif isstruct(p) || isa(p,'uiconfig2')
-                    obj.(pname) = uiconfig2(p,pname);
+                elseif isstruct(p) || isa(p,'uiconfig')
+                    obj.(pname) = uiconfig(p,pname);
                 else
                     error('illegal class (%s) for %s',class(p),pname);
                 end
@@ -72,7 +72,7 @@ classdef uiconfig2 < dynamicprops
             MakeNodes(obj,T,P);
             NodeSelect(T,P);
 
-            obj.uicomp{end+1} = T;
+            RecursiveAddFig(obj,P)
         end
 
         function set.hidden(obj,tf)
@@ -93,7 +93,7 @@ end
 function f = SetProp(obj, pname) %#ok<INUSL> 
     function setProp(obj, val)
         obj.meta.(pname).value = val;
-        obj.(pname) = obj.meta.(pname).value;
+%         obj.(pname) = obj.meta.(pname).value;
         ev = ParamChangedEvent(pname,val);
         notify(obj,'ParamChanged',ev);
     end
@@ -109,35 +109,39 @@ end
 
 function MakeNodes(obj,T,P)
 %     if ~isempty(T.SelectedNodes)
-%         curNode = T.SelectedNodes.Text;
+%         curNode = T.SelectedNodes;
 %     else
 %         curNode = [];
 %     end
     delete(T.Children);
-%     a = structfun(@(s) isa(s,'params.abstract'),obj.meta);
-%     if all(a)
-%         % only params
-%         T.Visible = 0;
-%         P.Layout.Column = [1 2];
-%         N = uitreenode(T,'Text',obj.name,'NodeData',obj);
-%     else
-%         T.Visible = 1;
-%         P.Layout.Column = 2;
-%         if ~any(a)
-%             % only categories
-%             fn = fieldnames(obj.meta);
-%             for i=1:numel(fn)
-%                 RecursiveAddNode(obj.(fn{i}),T,P);
-%             end
-%             N = T.Children(1);
-%         else
-%             % mixed
+    a = structfun(@(s) isa(s,'uic.abstract'),obj.meta);
+    if all(a)
+        % only params
+        T.Visible = 0;
+        P.Layout.Column = [1 2];
+        N = uitreenode(T,'Text',obj.name,'NodeData',obj);
+    else
+        T.Visible = 1;
+        P.Layout.Column = 2;
+        if ~any(a)
+            % only categories
+            fn = fieldnames(obj.meta);
+            for i=1:numel(fn)
+                RecursiveAddNode(obj.(fn{i}),T,P);
+            end
+            N = T.Children(1);
+        else
+            % mixed
             N = RecursiveAddNode(obj,T,P);
             N.expand;
-%         end
-%         
+        end
+        
+    end
+%     if ~isempty(curNode)
+%         T.SelectedNodes
+%     else
+        T.SelectedNodes = N;
 %     end
-    T.SelectedNodes = N;
     
 end
 
@@ -153,7 +157,7 @@ function NodeSelect(T,P)
     n = numel(fni);
     if n < 1, return, end
 
-    g = uigridlayout(P,[n 2],'ColumnWidth',{'1x', '3x'},'RowHeight',repmat({25},1,n),'Scrollable','on');
+    g = uigridlayout(P,[n 2],'ColumnWidth',{'1x', '2x'},'RowHeight',repmat({25},1,n),'Scrollable','on');
 
     for i=1:n
         name = fni{i};
@@ -164,12 +168,22 @@ end
 
 function N = RecursiveAddNode(o,parent,P)
     N = uitreenode(parent,'Text',o.name,'NodeData',o);
+    fn = fieldnames(o.meta);
+    for i=1:numel(fn)
+        f = o.(fn{i});
+        if isa(f,'uiconfig') && (~f.hidden || P.UserData.ShowHidden)
+            RecursiveAddNode(f,N,P);
+        end
+    end
+end
+
+function RecursiveAddFig(o,P)
     o.uicomp{end+1} = P;
     fn = fieldnames(o.meta);
     for i=1:numel(fn)
         f = o.(fn{i});
-        if isa(f,'uiconfig2') && (~f.hidden || P.UserData.ShowHidden)
-            RecursiveAddNode(f,N,P);
+        if isa(f,'uiconfig')
+            RecursiveAddFig(f,P);
         end
     end
 end
