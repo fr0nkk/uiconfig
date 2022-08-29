@@ -1,4 +1,4 @@
-classdef fcn < params.abstract
+classdef fcn < uic.abstract
     
     properties
         default = @(varargin) 0
@@ -13,7 +13,7 @@ classdef fcn < params.abstract
             if ~isa(val,'function_handle')
                 error('Not a function handle')
             end
-            val = obj.validate@params.abstract(val);
+            val = obj.validate@uic.abstract(val);
         end
 
         function str = toString(obj,val)

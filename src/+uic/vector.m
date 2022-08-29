@@ -1,4 +1,4 @@
-classdef vector < params.matrix
+classdef vector < uic.matrix
     
     properties
         
@@ -9,7 +9,7 @@ classdef vector < params.matrix
             if nargin < 1, default = nan; end
             if nargin < 2, sz = []; end
             if isempty(sz), sz = nan; end
-            obj@params.matrix(default,[1 sz(1)]);
+            obj@uic.matrix(default,[1 sz(1)]);
         end
 
         function str = toString(obj,val)
@@ -24,8 +24,12 @@ classdef vector < params.matrix
             val = sscanf(str,fmt)';
         end
 
-        function c = ui(varargin)
-            c = ui@params.abstract(varargin{:});
+        function c = uiTextField(varargin)
+            c = uiTextField@uic.abstract(varargin{:});
+        end
+
+        function updateuiFcn(varargin)
+            updateuiFcn@uic.abstract(varargin{:});
         end
 
         

@@ -4,24 +4,25 @@ classdef file < handle
         textField
         editButton
         cparam
-        cfgset
+%         cfgset
         g
     end
     
     methods
-        function obj = file(cparam,val,parent,cfgset)
+        function obj = file(cparam,parent)
             obj.g = uigridlayout(parent,[1 2],'ColumnWidth',{'1x',50},'Padding',0,'ColumnSpacing',5);
 
-            obj.textField = uisetlayout(uieditfield(obj.g,'text','Value',cparam.toString(val),'Editable',~cparam.constant,'ValueChangedFcn',@obj.SetFromText),1,1);
+            obj.textField = uisetlayout(uieditfield(obj.g,'text','Value',cparam.toString(cparam.value),'Editable',cparam.editable,'ValueChangedFcn',@obj.SetFromText),1,1);
 
-            obj.editButton = uisetlayout(uibutton(obj.g,'Text','Select','ButtonPushedFcn',@obj.SetFromButton),1,2);
+            obj.editButton = uisetlayout(uibutton(obj.g,'Text','Select','ButtonPushedFcn',@obj.SetFromButton,'Enable',cparam.editable),1,2);
 
-            obj.cfgset = cfgset;
+%             obj.cfgset = cfgset;
             obj.cparam = cparam;
         end
 
         function SetFromText(obj,src,evt)
-            obj.cparam.uisetprop(obj.textField,obj.cfgset);
+%             obj.cparam.uisetprop(obj.textField,obj.cfgset);
+            obj.cparam.setPropFromTextField(obj.textField);
         end
 
         function SetFromButton(obj,src,evt)

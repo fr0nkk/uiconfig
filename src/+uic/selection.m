@@ -1,4 +1,4 @@
-classdef selection < params.char
+classdef selection < uic.char
     
     properties
         options
@@ -11,7 +11,7 @@ classdef selection < params.char
             end
             if nargin < 2, default = options{1}; end
 
-            obj@params.char(default,false);
+            obj@uic.char(default,false);
 
             obj.options = options;
             
@@ -21,11 +21,19 @@ classdef selection < params.char
             if ~ismember(val,obj.options)
                 error('%s is not member of (%s)',val,strjoin(obj.options,', '));
             end
-            val = obj.validate@params.char(val);
+            val = obj.validate@uic.char(val);
         end
 
-        function c = ui(obj,val,parent,cfgset,varargin)
-            c = uidropdown(parent,'Value',val,'Enable',~obj.constant,'ValueChangedFcn',@(src,evt) cfgset(src.Value),'Items',obj.options);
+        function c = uiTextField(obj,parent)
+            c = uidropdown(parent,'Value',obj.value,'Enable',obj.editable,'ValueChangedFcn',@(src,evt) obj.setPropFromDropdown(src),'Items',obj.options);
+        end
+
+        function setPropFromDropdown(obj,comp)
+            obj.value = comp.Value;
+        end
+
+        function updateuiFcn(obj,comp)
+            comp.Value = obj.value;
         end
     end
 end
