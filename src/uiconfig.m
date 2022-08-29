@@ -86,8 +86,8 @@ classdef uiconfig < dynamicprops
             fn = fieldnames(obj.meta);
             for i=1:numel(fn)
                 f = fn{i};
-                if isa(obj.meta.(f),'uiconfig')
-                    p = obj.meta.(f).toStruct;
+                if isa(obj.(f),'uiconfig')
+                    p = obj.(f).toStruct;
                 else
                     p = obj.(f);
                     if strFlag
