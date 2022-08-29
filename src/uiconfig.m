@@ -80,6 +80,53 @@ classdef uiconfig < dynamicprops
             obj.updateui;
         end
 
+        function s = toStruct(obj,strFlag)
+            if nargin < 2, strFlag = false; end
+            s = struct;
+            fn = fieldnames(obj.meta);
+            for i=1:numel(fn)
+                f = fn{i};
+                if isa(obj.meta.(f),'uiconfig')
+                    p = obj.meta.(f).toStruct;
+                else
+                    p = obj.(f);
+                    if strFlag
+                        p = obj.meta.(f).toString(p);
+                    end
+                end
+                s.(f) = p;
+            end
+        end
+
+        function reset(obj)
+            fn = fieldnames(obj.meta);
+            for i=1:numel(fn)
+                f = fn{i};
+                if isa(obj.meta.(f),'uiconfig')
+                    obj.meta.(f).reset;
+                else
+                    obj.(f) = obj.meta.(f).default;
+                end
+            end
+        end
+
+        function fromStruct(obj,s,strFlag)
+            if nargin < 3, strFlag = false; end
+            fn = fieldnames(s);
+            for i=1:numel(fn)
+                f = fn{i};
+                if isa(obj.meta.(f),'uiconfig')
+                    obj.meta.(f).fromStruct(s.(f),strFlag);
+                else
+                    v = s.(f);
+                    if strFlag
+                        v = obj.meta.(f).fromString(v);
+                    end
+                    obj.(f) = v;
+                end
+            end
+        end
+
         function updateui(obj)
             obj.uicomp = obj.uicomp(cellfun(@isvalid,obj.uicomp));
             for i=1:numel(obj.uicomp)
