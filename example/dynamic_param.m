@@ -1,4 +1,4 @@
-function varargout = dynamic_param_example()
+function varargout = dynamic_param()
 
     meta = struct;
 

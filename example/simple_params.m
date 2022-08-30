@@ -1,4 +1,4 @@
-function cfg = simple_example()
+function cfg = simple_params()
 
 meta = struct;
 
