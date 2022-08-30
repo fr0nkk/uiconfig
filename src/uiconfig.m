@@ -51,7 +51,7 @@ classdef uiconfig < dynamicprops
                     error('illegal class (%s) for %s',class(p),pname);
                 end
             end
-            obj.id = char(matlab.lang.internal.uuid);
+            obj.id = char(java.util.UUID.randomUUID);
         end
 
         function fig = ui(obj,showHidden)
@@ -212,7 +212,7 @@ function MakeNodes(obj,T,P)
 end
 
 function expand2(node)
-    % callind .expand doesnt trigger the NodeExpandedFcn...
+    % calling .expand doesnt trigger the NodeExpandedFcn...
     % furthermore there seems to be no way to tell if a node is expanded
     node.expand;
     node.UserData.isExpanded = true;
