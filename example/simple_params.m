@@ -14,7 +14,7 @@ meta.some_dir = uic.file([],'dir');
 meta.some_fcn = uic.fcn(@disp);
 meta.some_struct = uic.structure(struct('abc','def'));
 
-cfg = uiconfig(meta,'simple example');
+cfg = uiconfig(meta,'simple params');
 
 end
 
