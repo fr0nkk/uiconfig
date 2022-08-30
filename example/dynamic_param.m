@@ -14,7 +14,7 @@ function varargout = dynamic_param_example()
 
     meta.hidden_category.param = uic.scalar(1);
     
-    c = uiconfig(meta,'dynamic_example');
+    c = uiconfig(meta,'dynamic params');
 
     c.meta.selection_hide.selection.postsetFcn = @() postset_sel(c.selection_hide);
     postset_sel(c.selection_hide);

@@ -64,7 +64,7 @@ classdef uiconfig < dynamicprops
             P = uisetlayout(uipanel(g),1,2);
             P.UserData.ShowHidden = showHidden;
 
-            T = uisetlayout(uitree(g,'SelectionChangedFcn',@(src,evt) NodeSelect(src,P)),1,1);
+            T = uisetlayout(uitree(g,'SelectionChangedFcn',@(src,evt) NodeSelect(src,P),'NodeExpandedFcn',@expandFcn,'NodeCollapsedFcn',@collapseFcn),1,1);
             P.UserData.UpdateNodes = @() MakeNodes(obj,T,P);
 
             MakeNodes(obj,T,P);
@@ -161,6 +161,9 @@ function MakeNodes(obj,T,P)
     else
         curId = '';
     end
+    C = findobj(T.Children);
+    tf = arrayfun(@(a) a.UserData.isExpanded,C);
+    expandedId = arrayfun(@(a) a.UserData.id,C(tf),'uni',0);
 
     delete(T.Children);
     a = structfun(@(s) isa(s,'uic.abstract'),obj.meta);
@@ -171,6 +174,7 @@ function MakeNodes(obj,T,P)
         P.Layout.Column = [1 2];
         N = uitreenode(T,'Text',obj.name,'NodeData',obj);
         N.UserData.id = obj.id;
+        N.UserData.isExpanded = false;
     else
         T.Visible = 1;
         P.Layout.Column = 2;
@@ -184,7 +188,8 @@ function MakeNodes(obj,T,P)
         else
             % mixed
             N = RecursiveAddNode(obj,T,P);
-            N.expand;
+            expand2(N);
+            N.UserData.isExpanded = true;
         end
     end
 
@@ -195,6 +200,7 @@ function MakeNodes(obj,T,P)
         tf = strcmp(ids,curId);
         if any(tf)
             T.SelectedNodes = C(tf);
+            reexpand(T,expandedId)
             return
         end
     end
@@ -202,7 +208,21 @@ function MakeNodes(obj,T,P)
     % default
     T.SelectedNodes = N;
     NodeSelect(T,P);
-    
+    reexpand(T,expandedId);
+end
+
+function expand2(node)
+    % callind .expand doesnt trigger the NodeExpandedFcn...
+    % furthermore there seems to be no way to tell if a node is expanded
+    node.expand;
+    node.UserData.isExpanded = true;
+end
+
+function reexpand(T,ids)
+    C = findobj(T.Children);
+    xId = arrayfun(@(a) a.UserData.id,C,'uni',0);
+    a = ismember(xId,ids);
+    arrayfun(@expand2,C(a));
 end
 
 function NodeSelect(T,P)
@@ -230,6 +250,7 @@ end
 function N = RecursiveAddNode(o,parent,P)
     N = uitreenode(parent,'Text',o.name,'NodeData',o);
     N.UserData.id = o.id;
+    N.UserData.isExpanded = false;
     fn = fieldnames(o.meta);
     for i=1:numel(fn)
         f = o.(fn{i});
@@ -248,4 +269,12 @@ function RecursiveAddFig(o,P)
             RecursiveAddFig(f,P);
         end
     end
+end
+
+function expandFcn(src,evt)
+    evt.Node.UserData.isExpanded = true;
+end
+
+function collapseFcn(src,evt)
+    evt.Node.UserData.isExpanded = false;
 end
