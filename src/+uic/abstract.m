@@ -12,19 +12,15 @@ classdef abstract < handle
         constant logical = false
         validFcn = @(val) val
         postsetFcn;
-
-        uicomp = {}
-        uipos = [];
     end
 
     properties(Dependent)
         editable
     end
 
-    methods
-%         function obj = abstract()
-%             obj.default = obj.validate(obj.default);
-%         end
+    properties(Hidden)
+        uicomp = {}
+        uipos = [];
     end
 
     methods
@@ -75,7 +71,6 @@ classdef abstract < handle
             success = true;
             comp.BackgroundColor = [1 1 1];
             comp.Tooltip = '';
-%             comp.UserData.NoUpdate = true;
             try
                 obj.value = obj.fromString(comp.Value);
             catch ME
@@ -88,7 +83,6 @@ classdef abstract < handle
                     return
                 end
             end
-%             comp.UserData.NoUpdate = false;
         end
 
         function tf = get.editable(obj)
@@ -97,8 +91,7 @@ classdef abstract < handle
 
         function updateui(obj)
             c = obj.validcomp;
-            tf = ~cellfun(@(c) c.UserData.NoUpdate,c);
-            cellfun(@obj.updateuiFcn,c(tf))
+            cellfun(@obj.updateuiFcn,c)
         end
 
         function updateuih(obj)

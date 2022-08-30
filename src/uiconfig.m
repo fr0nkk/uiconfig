@@ -3,26 +3,23 @@ classdef uiconfig < dynamicprops
     events
         % use addlistener on this event to catch when any parameter changes
         ParamChanged
-
-        % you can use addlistener on a parameter to catch when this
-        % particular parameter changes
     end
 
     properties
         % meta data of the config, constraints etc
-        % must be struct of uic elements
+        % must be struct of uic elements and/or uiconfigs
         meta
         
         % ui display name of this config
         name = 'uiconfig'
 
-        % should be hidden when it is part of some other config
+        % hide this config when it is part of other config
         hidden = false
+    end
 
+    properties(Hidden)
         uicomp = {}
-
-        % use switch pname to modify other parameters that depends on pname
-%         postsetFcn = @(cfg,pname) false; % should return updateNodesFlag
+        id
     end
     
     methods
@@ -54,6 +51,7 @@ classdef uiconfig < dynamicprops
                     error('illegal class (%s) for %s',class(p),pname);
                 end
             end
+            obj.id = char(matlab.lang.internal.uuid);
         end
 
         function fig = ui(obj,showHidden)
@@ -70,7 +68,6 @@ classdef uiconfig < dynamicprops
             P.UserData.UpdateNodes = @() MakeNodes(obj,T,P);
 
             MakeNodes(obj,T,P);
-            NodeSelect(T,P);
 
             RecursiveAddFig(obj,P)
         end
@@ -134,6 +131,10 @@ classdef uiconfig < dynamicprops
             end
         end
 
+        function c = copy(obj)
+            c = uiconfig(obj.meta,obj.hidden,obj.name);
+        end
+
     end % methods
 end
 
@@ -155,18 +156,21 @@ function f = GetProp(obj, pname) %#ok<INUSL>
 end
 
 function MakeNodes(obj,T,P)
-%     if ~isempty(T.SelectedNodes)
-%         curNode = T.SelectedNodes;
-%     else
-%         curNode = [];
-%     end
+    if ~isempty(T.SelectedNodes)
+        curId = T.SelectedNodes.UserData.id;
+    else
+        curId = '';
+    end
+
     delete(T.Children);
     a = structfun(@(s) isa(s,'uic.abstract'),obj.meta);
+
     if all(a)
         % only params
         T.Visible = 0;
         P.Layout.Column = [1 2];
         N = uitreenode(T,'Text',obj.name,'NodeData',obj);
+        N.UserData.id = obj.id;
     else
         T.Visible = 1;
         P.Layout.Column = 2;
@@ -182,19 +186,29 @@ function MakeNodes(obj,T,P)
             N = RecursiveAddNode(obj,T,P);
             N.expand;
         end
-        
     end
-%     if ~isempty(curNode)
-%         T.SelectedNodes
-%     else
-        T.SelectedNodes = N;
-%     end
+
+    if ~isempty(curId)
+        % retrieve previously selected node on refresh
+        C = findobj(T.Children);
+        ids = arrayfun(@(a) a.UserData.id,C,'uni',0);
+        tf = strcmp(ids,curId);
+        if any(tf)
+            T.SelectedNodes = C(tf);
+            return
+        end
+    end
+
+    % default
+    T.SelectedNodes = N;
+    NodeSelect(T,P);
     
 end
 
 function NodeSelect(T,P)
 
     delete(P.Children);
+    if isempty(T.SelectedNodes), return; end
 
     o = T.SelectedNodes.NodeData;
     fn = fieldnames(o.meta);
@@ -215,6 +229,7 @@ end
 
 function N = RecursiveAddNode(o,parent,P)
     N = uitreenode(parent,'Text',o.name,'NodeData',o);
+    N.UserData.id = o.id;
     fn = fieldnames(o.meta);
     for i=1:numel(fn)
         f = o.(fn{i});
