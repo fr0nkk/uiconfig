@@ -84,7 +84,7 @@ classdef uiconfig < dynamicprops
             for i=1:numel(fn)
                 f = fn{i};
                 if isa(obj.(f),'uiconfig')
-                    p = obj.(f).toStruct;
+                    p = obj.(f).toStruct(strFlag);
                 else
                     p = obj.(f);
                     if strFlag
@@ -119,7 +119,10 @@ classdef uiconfig < dynamicprops
                     if strFlag
                         v = obj.meta.(f).fromString(v);
                     end
+                    enabled = obj.meta.(f).enabled;
+                    obj.meta.(f).enabled = 1;
                     obj.(f) = v;
+                    obj.meta.(f).enabled = enabled;
                 end
             end
         end
