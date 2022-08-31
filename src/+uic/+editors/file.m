@@ -4,7 +4,6 @@ classdef file < handle
         textField
         editButton
         cparam
-%         cfgset
         g
     end
     
@@ -16,12 +15,10 @@ classdef file < handle
 
             obj.editButton = uisetlayout(uibutton(obj.g,'Text','Select','ButtonPushedFcn',@obj.SetFromButton,'Enable',cparam.editable),1,2);
 
-%             obj.cfgset = cfgset;
             obj.cparam = cparam;
         end
 
         function SetFromText(obj,src,evt)
-%             obj.cparam.uisetprop(obj.textField,obj.cfgset);
             obj.cparam.setPropFromTextField(obj.textField);
         end
 

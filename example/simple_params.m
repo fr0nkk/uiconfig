@@ -1,20 +1,27 @@
-function cfg = simple_params()
+function varargout = simple_params()
 
-meta = struct;
+    m = struct;
+    
+    m.some_number = uic.scalar(10);
+    m.some_vector = uic.vector(1:10);
+    m.some_matrix = uic.matrix(rand(3,3));
+    m.some_bool = uic.bool(true);
+    m.some_char = uic.char('some text');
+    m.some_selection = uic.selection({'Option 1','Option 2'});
+    m.some_color = uic.color(uint8([0 255 0]));
+    m.some_file = uic.file();
+    m.some_dir = uic.file([],'dir');
+    m.some_fcn = uic.fcn(@disp);
+    m.some_struct = uic.structure(struct('abc','def'));
+    
+    cfg = uiconfig(m,'simple params');
 
-meta.some_number = uic.scalar(10);
-meta.some_vector = uic.vector(1:10);
-meta.some_matrix = uic.matrix(rand(3,3));
-meta.some_bool = uic.bool(true);
-meta.some_char = uic.char('some text');
-meta.some_selection = uic.selection({'Option 1','Option 2'});
-meta.some_color = uic.color(uint8([0 255 0]));
-meta.some_file = uic.file();
-meta.some_dir = uic.file([],'dir');
-meta.some_fcn = uic.fcn(@disp);
-meta.some_struct = uic.structure(struct('abc','def'));
 
-cfg = uiconfig(meta,'simple params');
+    if nargout == 0
+        cfg.ui;
+    else
+        varargout{1} = cfg;
+    end
 
 end
 

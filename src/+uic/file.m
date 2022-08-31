@@ -19,8 +19,14 @@ classdef file < uic.char
             c = uic.editors.file(obj,parent).g;
         end
 
-        function updateuiFcn(obj,comp)
+        function updateValueFcn(obj,comp)
             comp.Children(1).Value = obj.toString(obj.value);
+        end
+
+        function updateEditableFcn(obj,comp)
+            tf = obj.editable;
+            comp.Children(1).Editable = tf;
+            comp.Children(2).Enable = tf;
         end
     end
 end

@@ -17,9 +17,15 @@ classdef color < uic.vector
             c = uic.editors.color(obj,parent).g;
         end
 
-        function updateuiFcn(obj,comp)
+        function updateValueFcn(obj,comp)
             comp.Children(1).Value = obj.toString(obj.value);
             comp.Children(2).BackgroundColor = double(obj.value)./255;
+        end
+
+        function updateEditableFcn(obj,comp)
+            tf = obj.editable;
+            comp.Children(1).Editable = tf;
+            comp.Children(2).Enable = tf;
         end
     end
 end

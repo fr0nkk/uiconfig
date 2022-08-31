@@ -39,7 +39,10 @@ classdef uiconfig < dynamicprops
                 prop = obj.addprop(pname);
                 p = obj.meta.(pname);
                 if isa(p,'uic.abstract')
+                    enabled = p.enabled;
+                    p.enabled = true;
                     p.value = p.default;
+                    p.enabled = enabled;
                     obj.(pname) = p.value;
                     if isempty(p.name), p.name = pname; end
                     prop.SetMethod = SetProp(obj,pname);
@@ -54,12 +57,11 @@ classdef uiconfig < dynamicprops
             obj.id = char(java.util.UUID.randomUUID);
         end
 
-        function fig = ui(obj,showHidden)
-            if nargin < 2, showHidden = false; end
+        function [parent,g] = ui(obj,parent,showHidden)
+            if nargin < 2 || isempty(parent), parent = uifigure('Name',obj.name); end
+            if nargin < 3, showHidden = false; end
 
-            fig = uifigure('Name',obj.name);
-
-            g = uigridlayout(fig,[1 2],'ColumnWidth',{'1x' '2x'});
+            g = uigridlayout(parent,[1 2],'ColumnWidth',{'1x' '2x'},'Padding',5,'ColumnSpacing',5);
 
             P = uisetlayout(uipanel(g),1,2);
             P.UserData.ShowHidden = showHidden;
@@ -216,7 +218,7 @@ end
 
 function expand2(node)
     % calling .expand doesnt trigger the NodeExpandedFcn...
-    % furthermore there seems to be no way to tell if a node is expanded
+    % furthermore there seems to be no way to tell if a node is expanded or not
     node.expand;
     node.UserData.isExpanded = true;
 end

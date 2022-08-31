@@ -24,8 +24,12 @@ classdef scalar < uic.matrix
             c = uiTextField@uic.abstract(varargin{:});
         end
 
-        function updateuiFcn(varargin)
-            updateuiFcn@uic.abstract(varargin{:});
+        function updateValueFcn(varargin)
+            updateValueFcn@uic.abstract(varargin{:});
+        end
+
+        function updateEditableFcn(varargin)
+            updateEditableFcn@uic.abstract(varargin{:});
         end
 
         

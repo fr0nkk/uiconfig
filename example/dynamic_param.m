@@ -1,30 +1,30 @@
 function varargout = dynamic_param()
 
-    meta = struct;
-
-    meta.show_hidden = uic.bool(false);
+    m = struct;
     
-    meta.selection_hide.selection = uic.selection({'scalar','vector','matrix'});
-    meta.selection_hide.scalar = uic.scalar(0);
-    meta.selection_hide.vector = uic.vector(1:5);
-    meta.selection_hide.matrix = uic.matrix(rand(3,3));
+    m.show_hidden = uic.bool(false);
     
-    meta.dependent_param.numbers = uic.vector(1:3);
-    meta.dependent_param.sum = uic.scalar();
-
-    meta.hidden_category.param = uic.scalar(1);
+    m.selection_hide.selection = uic.selection({'scalar','vector','matrix'});
+    m.selection_hide.scalar = uic.scalar(0);
+    m.selection_hide.vector = uic.vector(1:5);
+    m.selection_hide.matrix = uic.matrix(rand(3,3));
     
-    c = uiconfig(meta,'dynamic params');
-
-    c.meta.selection_hide.selection.postsetFcn = @() postset_sel(c.selection_hide);
+    m.dependent_param.numbers = uic.vector(1:3);
+    m.dependent_param.sum = uic.scalar();
+    
+    m.hidden_category.param = uic.scalar(1);
+    
+    c = uiconfig(m,'dynamic params');
+    
+    c.meta.selection_hide.selection.postset = @() postset_sel(c.selection_hide);
     postset_sel(c.selection_hide);
     
-    c.meta.dependent_param.numbers.postsetFcn = @() postset_num(c.dependent_param);
+    c.meta.dependent_param.numbers.postset = @() postset_num(c.dependent_param);
     postset_num(c.dependent_param);
-
-    c.meta.show_hidden.postsetFcn = @() postset_hid(c);
+    
+    c.meta.show_hidden.postset = @() postset_hid(c);
     postset_hid(c);
-
+    
     if nargout == 0
         c.ui;
     else
