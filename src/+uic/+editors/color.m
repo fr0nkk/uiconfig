@@ -4,7 +4,6 @@ classdef color < handle
         textField
         colorButton
         cparam
-%         cfgset
         g
     end
     
@@ -16,15 +15,11 @@ classdef color < handle
 
             obj.colorButton = uisetlayout(uibutton(obj.g,'BackgroundColor',double(cparam.value)./255,'Text','','ButtonPushedFcn',@obj.SetFromButton,'Enable',cparam.editable),1,2);
 
-%             obj.cfgset = cfgset;
             obj.cparam = cparam;
         end
 
         function SetFromText(obj,src,evt)
             obj.cparam.setPropFromTextField(obj.textField);
-%             if obj.cparam.setPropFromTextField(obj.textField)
-%                 obj.colorButton.BackgroundColor = double(obj.cparam.fromString(obj.textField.Value))./255;
-%             end
         end
 
         function SetFromButton(obj,src,evt)
@@ -33,8 +28,6 @@ classdef color < handle
             figure(f);
             if ~isscalar(c)
                 obj.cparam.value = uint8(round(c.*255));
-%                 obj.textField.Value = obj.cparam.toString(uint8(round(c.*255)));
-%                 obj.SetFromText;
             end
         end
     end

@@ -96,8 +96,12 @@ classdef matrix < uic.abstract
             end
         end
 
-        function updateuiFcn(obj,comp)
+        function updateValueFcn(obj,comp)
             comp.Children(1).Value = obj.toString(obj.value);
+        end
+
+        function updateEditableFcn(obj,comp)
+            comp.Children(1).Editable = obj.editable;
         end
     end
 

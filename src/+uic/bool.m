@@ -19,8 +19,12 @@ classdef bool < uic.scalar
             obj.value = comp.Value;
         end
 
-        function updateuiFcn(obj,comp)
+        function updateValueFcn(obj,comp)
             comp.Value = obj.value;
+        end
+
+        function updateEditableFcn(obj,comp)
+            comp.Enable = obj.editable;
         end
 
     end

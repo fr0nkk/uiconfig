@@ -13,7 +13,7 @@ classdef matrix < handle
 
             obj.textField = uisetlayout(uieditfield(obj.g,'text','Value',cparam.toString(cparam.value),'Editable',cparam.editable,'ValueChangedFcn',@obj.SetFromText),1,1);
 
-            obj.editButton = uisetlayout(uibutton(obj.g,'Text','Edit','ButtonPushedFcn',@obj.SetFromButton,'Enable',cparam.editable),1,2);
+            obj.editButton = uisetlayout(uibutton(obj.g,'Text','Edit','ButtonPushedFcn',@obj.SetFromButton),1,2);
 
             obj.cparam = cparam;
         end
@@ -26,6 +26,7 @@ classdef matrix < handle
             u = matrixeditor(obj.cparam.fromString(obj.textField.Value));
             u.fcnOK = @(M) obj.FinishEdit(M,u);
             u.castDropdown.Enable = false;
+            u.okButton.Enable = obj.cparam.editable;
 %             u.parent.WindowStyle = 'modal';
         end
 

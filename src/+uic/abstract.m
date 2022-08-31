@@ -11,7 +11,7 @@ classdef abstract < handle
         enabled logical = true
         constant logical = false
         validFcn = @(val) val
-        postsetFcn;
+        postset
     end
 
     properties(Dependent)
@@ -26,18 +26,28 @@ classdef abstract < handle
     methods
         function set.value(obj,v)
             obj.value = obj.validate(v);
-            obj.updateui;
-            obj.postset;
+            obj.updateValue;
+            obj.trig_postset;
         end
 
         function set.hidden(obj,h)
             obj.hidden = h;
-            obj.updateuih;
+            obj.updateHidden;
         end
 
-        function postset(obj)
-            if ~isempty(obj.postsetFcn)
-                obj.postsetFcn();
+        function set.enabled(obj,tf)
+            obj.enabled = tf;
+            obj.updateEditable;
+        end
+
+        function set.constant(obj,tf)
+            obj.constant = tf;
+            obj.updateEditable;
+        end
+
+        function trig_postset(obj)
+            if ~isempty(obj.postset)
+                obj.postset();
             end
         end
 
@@ -89,18 +99,23 @@ classdef abstract < handle
             tf = ~obj.constant && obj.enabled;
         end
 
-        function updateui(obj)
+        function updateValue(obj)
             c = obj.validcomp;
-            cellfun(@obj.updateuiFcn,c)
+            cellfun(@obj.updateValueFcn,c);
         end
 
-        function updateuih(obj)
+        function updateHidden(obj)
             [c,i] = obj.validcomp;
             for j=1:numel(c)
                 P = c{j}.Parent.Parent;
                 tf = ~obj.hidden || P.UserData.ShowHidden;
-                obj.updateuihFcn(c{j},i(j),tf);
+                obj.updateHiddenFcn(c{j},i(j),tf);
             end
+        end
+
+        function updateEditable(obj)
+            c = obj.validcomp;
+            cellfun(@obj.updateEditableFcn,c);
         end
 
         function [c,i] = validcomp(obj)
@@ -111,13 +126,18 @@ classdef abstract < handle
             i = obj.uipos;
         end
 
-        function updateuihFcn(obj,comp,i,tf)
+        function updateHiddenFcn(obj,comp,i,tf)
             comp.Parent.RowHeight{i} = 25*tf;
         end
 
-        function updateuiFcn(obj,comp)
+        function updateValueFcn(obj,comp)
             comp.Value = obj.toString(obj.value);
         end
+
+        function updateEditableFcn(obj,comp)
+            comp.Editable = obj.editable;
+        end
+        
     end
     
     methods(Abstract)
