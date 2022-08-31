@@ -16,7 +16,8 @@ classdef bool < uic.scalar
         end
 
         function setPropFromCheckbox(obj,comp)
-            obj.value = comp.Value;
+            obj.uiSetValue(comp.Value)
+%             obj.value = comp.Value;
         end
 
         function updateValueFcn(obj,comp)

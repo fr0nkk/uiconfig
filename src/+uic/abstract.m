@@ -3,8 +3,11 @@ classdef abstract < handle
         default
     end
 
-    properties
+    properties(SetObservable=true)
         value
+    end
+
+    properties
         name = ''
         description = ''
         hidden logical = false
@@ -21,6 +24,7 @@ classdef abstract < handle
     properties(Hidden)
         uicomp = {}
         uipos = [];
+        cfgset
     end
 
     methods
@@ -28,6 +32,10 @@ classdef abstract < handle
             obj.value = obj.validate(v);
             obj.updateValue;
             obj.trig_postset;
+        end
+
+        function uiSetValue(obj,v)
+            obj.cfgset(v);
         end
 
         function set.hidden(obj,h)
@@ -82,7 +90,8 @@ classdef abstract < handle
             comp.BackgroundColor = [1 1 1];
             comp.Tooltip = '';
             try
-                obj.value = obj.fromString(comp.Value);
+                obj.uiSetValue(obj.fromString(comp.Value));
+%                 obj.value = obj.fromString(comp.Value);
             catch ME
                 success = false;
                 if isvalid(comp)
@@ -136,6 +145,10 @@ classdef abstract < handle
 
         function updateEditableFcn(obj,comp)
             comp.Editable = obj.editable;
+        end
+
+        function varargout = addvaluelistener(obj,callback,varargin)
+            [varargout{1:nargout}] = addlistener(obj,'value','PostSet',@(src,evt) callback(obj.value,varargin{:}));
         end
         
     end
