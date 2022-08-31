@@ -39,15 +39,22 @@ classdef uiconfig < dynamicprops
                 prop = obj.addprop(pname);
                 p = obj.meta.(pname);
                 if isa(p,'uic.abstract')
+                    % temporary enable to be able to set the param
                     enabled = p.enabled;
                     p.enabled = true;
+
+                    % set to default value
                     p.value = p.default;
+
+                    % revert the enabled state
                     p.enabled = enabled;
+
                     obj.(pname) = p.value;
                     if isempty(p.name), p.name = pname; end
                     prop.SetMethod = SetProp(obj,pname);
                     prop.GetMethod = GetProp(obj,pname);
                     prop.SetObservable = true;
+                    p.cfgset = @(v) cfgset(obj,pname,v);
                 elseif isstruct(p) || isa(p,'uiconfig')
                     obj.(pname) = uiconfig(p,pname);
                 else
@@ -121,9 +128,15 @@ classdef uiconfig < dynamicprops
                     if strFlag
                         v = obj.meta.(f).fromString(v);
                     end
+
+                    % temporary enable to be able to edit disabled params
                     enabled = obj.meta.(f).enabled;
                     obj.meta.(f).enabled = 1;
+
+                    % set it
                     obj.(f) = v;
+                    
+                    % revert to its original enabled state
                     obj.meta.(f).enabled = enabled;
                 end
             end
@@ -141,6 +154,10 @@ classdef uiconfig < dynamicprops
         end
 
     end % methods
+end
+
+function cfgset(obj,pname,v)
+    obj.(pname) = v;
 end
 
 function f = SetProp(obj, pname) %#ok<INUSL> 

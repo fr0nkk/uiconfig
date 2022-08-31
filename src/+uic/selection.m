@@ -29,7 +29,8 @@ classdef selection < uic.char
         end
 
         function setPropFromDropdown(obj,comp)
-            obj.value = comp.Value;
+            obj.uiSetValue(comp.Value);
+%             obj.value = comp.Value;
         end
 
         function updateValueFcn(obj,comp)
