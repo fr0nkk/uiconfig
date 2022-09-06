@@ -14,7 +14,7 @@ if fid < 0
     error(err);
 end
 
-fwrite(fid,str);
+fprintf(fid,'%s',str);
 
 fclose(fid);
 
