@@ -16,10 +16,10 @@ function varargout = dynamic_param()
     
     c = uiconfig(m,'dynamic params');
     
-    c.meta.selection_hide.selection.postset = @() postset_sel(c.selection_hide);
+    c.selection_hide.meta.selection.postset = @() postset_sel(c.selection_hide);
     postset_sel(c.selection_hide);
     
-    c.meta.dependent_param.numbers.postset = @() postset_num(c.dependent_param);
+    c.dependent_param.meta.numbers.postset = @() postset_num(c.dependent_param);
     postset_num(c.dependent_param);
     
     c.meta.show_hidden.postset = @() postset_hid(c);
