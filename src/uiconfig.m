@@ -57,6 +57,7 @@ classdef uiconfig < dynamicprops
                     p.cfgset = @(v) cfgset(obj,pname,v);
                 elseif isstruct(p) || isa(p,'uiconfig')
                     obj.(pname) = uiconfig(p,pname);
+                    obj.meta.(pname) = obj.(pname);
                 else
                     error('illegal class (%s) for %s',class(p),pname);
                 end
@@ -188,7 +189,7 @@ function MakeNodes(obj,T,P)
     expandedId = arrayfun(@(a) a.UserData.id,C(tf),'uni',0);
 
     delete(T.Children);
-    a = structfun(@(s) isa(s,'uic.abstract'),obj.meta);
+    a = structfun(@(s) isa(s,'uic.abstract') || s.hidden,obj.meta);
 
     if all(a)
         % only params

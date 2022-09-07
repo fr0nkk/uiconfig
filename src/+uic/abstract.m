@@ -75,7 +75,7 @@ classdef abstract < handle
             c.UserData.NoUpdate = false;
             obj.uicomp{end+1} = c;
             obj.uipos(end+1) = i;
-            g.RowHeight{i} = 25*~obj.hidden;
+            g.RowHeight{i} = 25*(~obj.hidden || g.Parent.UserData.ShowHidden);
         end
 
         function c = uiTextField(obj,parent)
