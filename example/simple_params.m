@@ -13,6 +13,7 @@ function varargout = simple_params()
     m.some_dir = uic.file([],'dir');
     m.some_fcn = uic.fcn(@disp);
     m.some_struct = uic.structure(struct('abc','def'));
+    m.some_files = uic.file([],'multi');
     
     cfg = uiconfig(m,'simple params');
 

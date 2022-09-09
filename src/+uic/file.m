@@ -1,18 +1,27 @@
-classdef file < uic.char
+classdef file < uic.abstract
     
     properties
-        type = 'get' % get, put, dir
+        default = fullfile(getenv('USERPROFILE'),'*.*');
+        type = 'get' % get, put, dir, multi
     end
     
     methods
         function obj = file(default,type)
-            if nargin < 1 || isempty(default), default = getenv('USERPROFILE'); end
-            obj@uic.char(default,false);
+            if nargin >= 1 && ~isempty(default), obj.default = default; end
             if nargin >= 2, obj.type = type; end
         end
 
         function val = validate(obj,val)
-            val = obj.validate@uic.char(val);
+            if isempty(val)
+                error('Empty not allowed');
+            end
+            if ~ischar(val) && ~(iscell(val) && all(cellfun(@ischar,val)))
+                error('invalid type, must be char or cell of char');
+            end
+            if iscell(val)
+                val = val(:)';
+            end
+            val = obj.validate@uic.abstract(val);
         end
 
         function c = uiTextField(obj,parent)
@@ -27,6 +36,22 @@ classdef file < uic.char
             tf = obj.editable;
             comp.Children(1).Editable = tf;
             comp.Children(2).Enable = tf;
+        end
+
+        function s = toString(obj,v)
+            if iscell(v)
+                s = strjoin(v,char(124));
+            else
+                s=v;
+            end
+        end
+
+        function v = fromString(obj,s)
+            if any(s == char(124))
+                v = strsplit(s,char(124));
+            else
+                v = s;
+            end
         end
     end
 end
