@@ -25,19 +25,25 @@ classdef file < handle
         function SetFromButton(obj,src,evt)
             a = ancestor(obj.editButton,'figure');
             filt = obj.cparam.fromString(obj.textField.Value);
+            title = ['Select ' obj.cparam.name];
             switch obj.cparam.type
                 case 'get'
-                    [f,d] = uigetfile(filt);
+                    [f,d] = uigetfile(filt,title);
                 case 'put'
-                    [f,d] = uiputfile(filt);
+                    [f,d] = uiputfile(filt,title);
                 case 'dir'
-                    f = uigetdir(filt);
+                    f = uigetdir(filt,title);
                     d = [];
+                case 'multi'
+                    if iscell(filt)
+                        filt = fullfile(fileparts(filt{1}),'*.*');
+                    end
+                    [f,d] = uigetfile(filt,title,'MultiSelect','on');
                 otherwise
-                    error('invalid file type, must be get, put or dir');
+                    error('invalid file type, must be get, put, dir or multi');
             end
             figure(a);
-            if f
+            if iscell(f) || ischar(f)
                 fn = fullfile(d,f);
                 obj.FinishEdit(fn);
             end
