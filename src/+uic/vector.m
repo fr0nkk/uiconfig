@@ -10,6 +10,7 @@ classdef vector < uic.matrix
             if nargin < 2, sz = []; end
             if isempty(sz), sz = nan; end
             obj@uic.matrix(default,[1 sz(1)]);
+            obj.oArgs = {obj.default,obj.sz(2)};
         end
 
         function str = toString(obj,val)

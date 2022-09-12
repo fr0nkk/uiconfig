@@ -11,6 +11,7 @@ classdef color < uic.vector
                 error('color must be 1x3 uint8');
             end
             obj@uic.vector(default,3);
+            obj.oArgs = {obj.default};
         end
 
         function c = uiTextField(obj,parent)

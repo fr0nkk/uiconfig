@@ -13,6 +13,7 @@ classdef date < uic.abstract
             if nargin >= 2
                 obj.dispFormat = DisplayFormat;
             end
+            obj.oArgs = {obj.default,obj.dispFormat};
         end
 
         function val = validate(obj,val)

@@ -9,6 +9,7 @@ classdef char < uic.abstract
         function obj = char(default,emptyAllowed)
             if nargin >= 1, obj.default = default; end
             if nargin >= 2 && ~isempty(emptyAllowed), obj.emptyAllowed = emptyAllowed; end
+            obj.oArgs = {obj.default,obj.emptyAllowed};
         end
         
         function val = validate(obj,val)

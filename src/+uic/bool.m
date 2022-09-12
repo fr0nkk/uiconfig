@@ -9,6 +9,7 @@ classdef bool < uic.scalar
             if nargin < 1, default = false; end
             default = logical(default);
             obj@uic.scalar(default);
+            obj.oArgs = {obj.default};
         end
 
         function c = uiTextField(obj,parent)
