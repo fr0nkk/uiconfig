@@ -7,6 +7,7 @@ classdef fcn < uic.abstract
     methods
         function obj = fcn(default)
             if nargin >= 1, obj.default = default; end
+            obj.oArgs = {obj.default};
         end
 
         function val = validate(obj,val)

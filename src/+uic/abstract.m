@@ -25,9 +25,11 @@ classdef abstract < handle
         uicomp = {}
         uipos = [];
         cfgset
+        oArgs = {}
     end
 
     methods
+
         function set.value(obj,v)
             obj.value = obj.validate(v);
             obj.updateValue;
@@ -149,6 +151,19 @@ classdef abstract < handle
 
         function varargout = addvaluelistener(obj,callback,varargin)
             [varargout{1:nargout}] = addlistener(obj,'value','PostSet',@(src,evt) callback(obj.value,varargin{:}));
+        end
+
+        function o = copy(obj)
+            f = str2func(class(obj));
+            o = f(obj.oArgs{:});
+            o.name = obj.name;
+            o.description = obj.description;
+            o.hidden = obj.hidden;
+            o.constant = obj.constant;
+            o.validFcn = obj.validFcn;
+            o.postset = obj.postset;
+            o.value = obj.value;
+            o.enabled = obj.enabled;
         end
         
     end

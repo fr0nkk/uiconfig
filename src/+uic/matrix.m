@@ -23,6 +23,7 @@ classdef matrix < uic.abstract
                 end
                 obj.sz = sz;
             end
+            obj.oArgs = {obj.default,obj.sz};
         end
 
         function val = validate(obj,val)

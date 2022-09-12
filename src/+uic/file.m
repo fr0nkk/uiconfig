@@ -9,6 +9,7 @@ classdef file < uic.abstract
         function obj = file(default,type)
             if nargin >= 1 && ~isempty(default), obj.default = default; end
             if nargin >= 2, obj.type = type; end
+            obj.oArgs = {obj.default,obj.type};
         end
 
         function val = validate(obj,val)

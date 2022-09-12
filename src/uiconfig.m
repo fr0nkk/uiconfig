@@ -151,10 +151,27 @@ classdef uiconfig < dynamicprops
         end
 
         function c = copy(obj)
-            c = uiconfig(obj.meta,obj.hidden,obj.name);
+            c = uiconfig(copymeta(obj),obj.name,obj.hidden);
+            c.fromStruct(obj.toStruct);
         end
 
     end % methods
+end
+
+function m = copymeta(meta)
+    if isa(meta,'uiconfig')
+        meta = meta.meta;
+    end
+    m = struct;
+    fn = fieldnames(meta);
+    for i=1:numel(fn)
+        p = meta.(fn{i});
+        if isa(p,'uic.abstract')
+            m.(fn{i}) = p.copy;
+        else
+            m.(fn{i}) = copymeta(p);
+        end
+    end
 end
 
 function cfgset(obj,pname,v)

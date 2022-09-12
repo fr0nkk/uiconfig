@@ -14,6 +14,7 @@ classdef selection < uic.char
             obj@uic.char(default,false);
 
             obj.options = options;
+            obj.oArgs = {obj.options,obj.default};
             
         end
 

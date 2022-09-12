@@ -8,6 +8,7 @@ classdef scalar < uic.matrix
         function obj = scalar(default)
             if nargin < 1, default = nan; end
             obj@uic.matrix(default,1);
+            obj.oArgs = {obj.default};
         end
 
         function str = toString(obj,val)
