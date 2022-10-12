@@ -14,7 +14,7 @@ function varargout = simple_params()
     m.some_fcn = uic.fcn(@disp);
     m.some_struct = uic.structure(struct('abc','def'));
     m.some_files = uic.file([],'multi');
-    m.some_date = uic.date;
+    m.some_datetime = uic.datetime;
     
     cfg = uiconfig(m,'simple params');
 
