@@ -1,20 +1,19 @@
 classdef datetime < uic.abstract
     
     properties
-        default = now
-        dispFormat = 'yyyy-MM-dd HH:mm:ss'
-        internalFormat = 'yyyy-MM-dd HH:mm:ss.SSSSSSSSS';
+        default = 730486 % 2000-01-01
+        Format = 'yyyy-MM-dd HH:mm:ss'
     end
     
     methods
-        function obj = datetime(default,DisplayFormat)
+        function obj = datetime(default,Format)
+            if nargin >= 2
+                obj.Format = Format;
+            end
             if nargin >= 1 && ~isempty(default)
                 obj.default = obj.validate(default);
             end
-            if nargin >= 2
-                obj.dispFormat = DisplayFormat;
-            end
-            obj.oArgs = {obj.default,obj.dispFormat};
+            obj.oArgs = {obj.default,obj.Format};
         end
 
         function val = validate(obj,val)
@@ -26,7 +25,7 @@ classdef datetime < uic.abstract
             end
 
             if isnat(val)
-                error('invalid time, must be format: %s',obj.dispFormat);
+                error('invalid time, must be format: %s',obj.Format);
             end
 
             if ~isscalar(val)
@@ -36,47 +35,13 @@ classdef datetime < uic.abstract
             val = obj.validate@uic.abstract(val);
         end
 
-        function c = uiTextField(obj,parent)
-            v = obj.value;
-            v.Format = obj.dispFormat;
-            c = uieditfield(parent,'Value',char(v),'Enable',obj.editable,'ValueChangedFcn',@(src,evt) obj.setPropFromField(src));
-        end
-
-        function setPropFromField(obj,comp)
-            try
-                value = datetime(comp.Value,'InputFormat',obj.dispFormat);
-            catch
-                value = str2double(comp.Value);
-            end
-
-            comp.BackgroundColor = [1 1 1];
-            comp.Tooltip = '';
-            try
-                obj.uiSetValue(value);
-            catch ME
-                if isvalid(comp)
-                    comp.Tooltip = ME.message;
-                    comp.BackgroundColor = [1 0.8 0.8];
-                else
-                    disp('component is deleted')
-                    return
-                end
-            end
-        end
-
-        function updateValueFcn(obj,comp)
-            v = obj.value;
-            v.Format = obj.dispFormat;
-            comp.Value = char(v);
-        end
-
         function str = toString(obj,val)
-            val.Format = obj.internalFormat;
+            val.Format = obj.Format;
             str = char(val);
         end
 
         function val = fromString(obj,str)
-            val = datetime(str,'InputFormat',obj.internalFormat);
+            val = datetime(str,'InputFormat',obj.Format);
         end
 
     end
